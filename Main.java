@@ -4,7 +4,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 
-import org.jgrapht.graph.*;
+import org.jgrapht.graph.DefaultWeightedEdge;
+import org.jgrapht.graph.SimpleWeightedGraph;
 
 public class Main {
 	
@@ -19,6 +20,7 @@ public class Main {
 		
 		int verts = in.nextInt();	// number of n (verts) in file
 		int edges = in.nextInt();	// number of m (edges) in file
+		in.nextLine();
 		
 		setUpGraph(in, verts, edges);
 		
@@ -27,8 +29,22 @@ public class Main {
 	}
 
 	private static void setUpGraph(Scanner in, int v, int e) {
-		for(int i = 0; i < v; i++){
+		SimpleWeightedGraph<Integer, DefaultWeightedEdge> g = new SimpleWeightedGraph<Integer, DefaultWeightedEdge>(DefaultWeightedEdge.class);
+		
+		for(int i = 0; i < e; i++){
+			int firstV = in.nextInt();	// read in input
+			int secondV = in.nextInt();
+			int weight = in.nextInt();
 			
+			if(in.hasNext()){
+				in.nextLine();
+			}
+			
+			g.addVertex(firstV);
+			g.addVertex(secondV);
+			DefaultWeightedEdge curEdge = g.addEdge(firstV, secondV);	// add edge to graph
+			g.setEdgeWeight(curEdge, weight); 							// add weight to this edge
 		}
+		System.out.println(g);
 	}
 }
