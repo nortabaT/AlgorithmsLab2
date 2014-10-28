@@ -2,10 +2,13 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
 import java.util.Scanner;
 
 import org.jgrapht.graph.DefaultWeightedEdge;
+import org.jgrapht.graph.GraphPathImpl;
 import org.jgrapht.graph.WeightedMultigraph;
+import org.jgrapht.traverse.DepthFirstIterator;
 
 public class Main {
 	
@@ -37,7 +40,15 @@ public class Main {
 		int timeStart = in.nextInt();
 		int timeFin = in.nextInt();
 		
-		System.out.println("" + start + " " + end + " " + timeStart + " " + timeFin);
+		DepthFirstIterator<Integer, DefaultWeightedEdge> i = new DepthFirstIterator<Integer, DefaultWeightedEdge>(g, start);
+		while(i.hasNext()){
+			System.out.print(i.next() + " ");
+		}
+		System.out.println("\n" + start + " " + end + " " + timeStart + " " + timeFin);
+	}
+	
+	private static void dfs(WeightedMultigraph<Integer, DefaultWeightedEdge> g, int start, int end, int timeStart, int timeEnd){
+		
 	}
 
 	private static WeightedMultigraph<Integer, DefaultWeightedEdge> setUpGraph(Scanner in, int v, int e) {
