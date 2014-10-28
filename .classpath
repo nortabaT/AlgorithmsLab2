@@ -2,5 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path=""/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="D:/Documents/School/Algorithms - 360C/Labs/Lab 2/Code/reference/jgrapht-core-0.9.0.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>
