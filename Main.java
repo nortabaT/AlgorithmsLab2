@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.Scanner;
 
 import org.jgrapht.graph.DefaultWeightedEdge;
-import org.jgrapht.graph.SimpleWeightedGraph;
+import org.jgrapht.graph.WeightedMultigraph;
 
 public class Main {
 	
@@ -22,19 +22,35 @@ public class Main {
 		int edges = in.nextInt();	// number of m (edges) in file
 		in.nextLine();
 		
-		setUpGraph(in, verts, edges);
+		WeightedMultigraph<Integer, DefaultWeightedEdge> g = setUpGraph(in, verts, edges);	// set up graph
+		System.out.println(g);
+		searchGraph(in, g);
 		
 		outputFile.flush();
 		outputFile.close();
 	}
 
-	private static void setUpGraph(Scanner in, int v, int e) {
-		SimpleWeightedGraph<Integer, DefaultWeightedEdge> g = new SimpleWeightedGraph<Integer, DefaultWeightedEdge>(DefaultWeightedEdge.class);
+	private static void searchGraph(Scanner in, WeightedMultigraph<Integer, DefaultWeightedEdge> g) {
+		// TODO Auto-generated method stub
+		int start = in.nextInt();
+		int end = in.nextInt();
+		int timeStart = in.nextInt();
+		int timeFin = in.nextInt();
+		
+		System.out.println("" + start + " " + end + " " + timeStart + " " + timeFin);
+	}
+
+	private static WeightedMultigraph<Integer, DefaultWeightedEdge> setUpGraph(Scanner in, int v, int e) {
+		WeightedMultigraph<Integer, DefaultWeightedEdge> g = new WeightedMultigraph<Integer, DefaultWeightedEdge>(DefaultWeightedEdge.class);
 		
 		for(int i = 0; i < e; i++){
-			int firstV = in.nextInt();	// read in input
+			int firstV = in.nextInt();	// read input
 			int secondV = in.nextInt();
 			int weight = in.nextInt();
+			
+			if(firstV == secondV){
+				break; // no loops allowed in this multigraph
+			}
 			
 			if(in.hasNext()){
 				in.nextLine();
@@ -45,6 +61,7 @@ public class Main {
 			DefaultWeightedEdge curEdge = g.addEdge(firstV, secondV);	// add edge to graph
 			g.setEdgeWeight(curEdge, weight); 							// add weight to this edge
 		}
-		System.out.println(g);
+		
+		return g;
 	}
 }
