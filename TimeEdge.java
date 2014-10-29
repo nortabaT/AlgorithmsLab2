@@ -19,5 +19,10 @@ public class TimeEdge extends DefaultWeightedEdge {
 	public int getOtherVertex(int vertex){
 		return (vertex == this.getFirst()) ? this.getSecond() : this.getFirst();
 	}
+	
+	@Override
+	public String toString(){
+		return this.getFirst() + " " + this.getSecond();
+	}
 
 }
