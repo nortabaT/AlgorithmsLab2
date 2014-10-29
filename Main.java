@@ -2,13 +2,14 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.PriorityQueue;
 import java.util.Scanner;
+import java.util.Set;
+import java.util.Stack;
 
-import org.jgrapht.graph.DefaultWeightedEdge;
-import org.jgrapht.graph.GraphPathImpl;
 import org.jgrapht.graph.WeightedMultigraph;
-import org.jgrapht.traverse.DepthFirstIterator;
 
 public class Main {
 	
@@ -25,34 +26,47 @@ public class Main {
 		int edges = in.nextInt();	// number of m (edges) in file
 		in.nextLine();
 		
-		WeightedMultigraph<Integer, DefaultWeightedEdge> g = setUpGraph(in, verts, edges);	// set up graph
-		System.out.println(g);
+		WeightedMultigraph<Integer, TimeEdge> g = setUpGraph(in, verts, edges);	// set up graph
 		searchGraph(in, g);
 		
 		outputFile.flush();
 		outputFile.close();
 	}
 
-	private static void searchGraph(Scanner in, WeightedMultigraph<Integer, DefaultWeightedEdge> g) {
+	private static void searchGraph(Scanner in, WeightedMultigraph<Integer, TimeEdge> g) {
 		// TODO Auto-generated method stub
 		int start = in.nextInt();
 		int end = in.nextInt();
 		int timeStart = in.nextInt();
 		int timeFin = in.nextInt();
 		
-		DepthFirstIterator<Integer, DefaultWeightedEdge> i = new DepthFirstIterator<Integer, DefaultWeightedEdge>(g, start);
-		while(i.hasNext()){
-			System.out.print(i.next() + " ");
-		}
-		System.out.println("\n" + start + " " + end + " " + timeStart + " " + timeFin);
+		dfs(g, start, end, timeStart, timeFin);
 	}
 	
-	private static void dfs(WeightedMultigraph<Integer, DefaultWeightedEdge> g, int start, int end, int timeStart, int timeEnd){
+	private static void dfs(WeightedMultigraph<Integer, TimeEdge> g, int start, int end, int timeStart, int timeEnd){
+		Stack<Integer> stack = new Stack<Integer>();
+		HashSet<Integer> visited = new HashSet<Integer>();
+		Stack<TimeEdge> solution = new Stack<TimeEdge>();
 		
+		if(g.containsVertex(start)){
+			stack.push(start);		// start our DFS
+			visited.add(start);		// add this to visited node list
+			
+			while(!stack.isEmpty()){
+				int cur = stack.peek();
+				Iterator<TimeEdge> it = g.edgesOf(cur).iterator();
+				
+				while(it.hasNext()){
+					TimeEdge childEdge = it.next();
+					// TODO: filter edges by time, and keep track of what time it is
+					stack.push(childEdge.getOtherVertex(cur));	// push this edge to our DFS stack
+				}
+			}
+		}
 	}
 
-	private static WeightedMultigraph<Integer, DefaultWeightedEdge> setUpGraph(Scanner in, int v, int e) {
-		WeightedMultigraph<Integer, DefaultWeightedEdge> g = new WeightedMultigraph<Integer, DefaultWeightedEdge>(DefaultWeightedEdge.class);
+	private static WeightedMultigraph<Integer, TimeEdge> setUpGraph(Scanner in, int v, int e) {
+		WeightedMultigraph<Integer, TimeEdge> g = new WeightedMultigraph<Integer, TimeEdge>(TimeEdge.class);
 		
 		for(int i = 0; i < e; i++){
 			int firstV = in.nextInt();	// read input
@@ -69,7 +83,7 @@ public class Main {
 			
 			g.addVertex(firstV);
 			g.addVertex(secondV);
-			DefaultWeightedEdge curEdge = g.addEdge(firstV, secondV);	// add edge to graph
+			TimeEdge curEdge = g.addEdge(firstV, secondV);	// add edge to graph
 			g.setEdgeWeight(curEdge, weight); 							// add weight to this edge
 		}
 		
