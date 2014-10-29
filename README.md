@@ -1,5 +1,8 @@
 **AlgorithmsLab2**
 ==============
+This program in general takes a set of given weighted edges and finds the requested trace using a modified DFS algorithm in O(n + m) time.
+Read HW2.pdf for detailed instructions on how this lab is structured.
+
 *Input File Format*: Your program will read its input from a plain-text file. The first line of the input
 contains two positive integers, n and m, separated by a single space, where n represents the number of
 devices, and m denotes the number of trace entries. Each of the next m lines contains a trace (one trace per
