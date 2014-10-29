@@ -4,14 +4,17 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.PriorityQueue;
 import java.util.Scanner;
-import java.util.Set;
 import java.util.Stack;
 
 import org.jgrapht.graph.WeightedMultigraph;
 
 public class Main {
+	
+	public static int start;
+	public static int end;
+	public static int timeStart;
+	public static int timeEnd;
 	
 	public static void main(String [] args) throws IOException{
 		String inputPath = args[0];															// name of this input file
@@ -27,44 +30,73 @@ public class Main {
 		in.nextLine();
 		
 		WeightedMultigraph<Integer, TimeEdge> g = setUpGraph(in, verts, edges);	// set up graph
-		searchGraph(in, g);
+		searchGraph(in, outputFile, g);
 		
 		outputFile.flush();
 		outputFile.close();
 	}
 
-	private static void searchGraph(Scanner in, WeightedMultigraph<Integer, TimeEdge> g) {
+	private static void searchGraph(Scanner in, FileWriter outputFile, WeightedMultigraph<Integer, TimeEdge> g) throws IOException {
 		// TODO Auto-generated method stub
-		int start = in.nextInt();
-		int end = in.nextInt();
-		int timeStart = in.nextInt();
-		int timeFin = in.nextInt();
+		start = in.nextInt();
+		end = in.nextInt();
+		timeStart = in.nextInt();
+		timeEnd = in.nextInt();
 		
-		dfs(g, start, end, timeStart, timeFin);
+		outputFile.write(dfs(g));
 	}
 	
-	private static void dfs(WeightedMultigraph<Integer, TimeEdge> g, int start, int end, int timeStart, int timeEnd){
+	private static String dfs(WeightedMultigraph<Integer, TimeEdge> g){
 		Stack<Integer> stack = new Stack<Integer>();
 		HashSet<Integer> visited = new HashSet<Integer>();
-		Stack<TimeEdge> solution = new Stack<TimeEdge>();
+		Stack<Integer> timeStack = new Stack<Integer>();
+		String solution = "";
 		
 		if(g.containsVertex(start)){
-			stack.push(start);		// start our DFS
-			visited.add(start);		// add this to visited node list
+			stack.push(start);	// start our DFS
+			visited.add(start);	// add this to visited node list
+			timeStack.push(0);	// add start time 0
+			System.out.println(start);
+			solution += start + "\n";
+			int time = timeStart;
 			
 			while(!stack.isEmpty()){
 				int cur = stack.peek();
 				Iterator<TimeEdge> it = g.edgesOf(cur).iterator();
+				TimeEdge child = null;
+				int otherVertex = 0;
 				
-				while(it.hasNext()){
-					TimeEdge childEdge = it.next();
-					// TODO: filter edges by time, and keep track of what time it is
-					stack.push(childEdge.getOtherVertex(cur));	// push this edge to our DFS stack
+				while(it.hasNext()){ 	// find next unvisited child
+					child = it.next();
+					otherVertex = child.getOtherVertex(cur);
+					if(child.getTime() > timeEnd || visited.contains(otherVertex) || child.getTime() < time){ // check if adding this edge time is within our bounds
+						child = null;
+						continue;
+					}else{
+						break;	// valid node
+					}
+				}
+					
+				if(child != null){	
+					visited.add(otherVertex);	// add this vertex to visited set
+					stack.push(otherVertex);	// push this vertex to our DFS stack
+					time = child.getTime();	// push current solution's time to stack
+					System.out.println(child + " " + child.getTime());
+					solution += child + " " + child.getTime() + "\n";
+					
+					if(otherVertex == end){
+						System.out.println("SOLUTION: \n\n"+solution);
+						return solution;
+					}
+				}else{
+					stack.pop(); // backtrack
 				}
 			}
 		}
+		System.out.println("Could not find solution, exiting and writing 0 to file.");
+		return "0";
 	}
-
+	
 	private static WeightedMultigraph<Integer, TimeEdge> setUpGraph(Scanner in, int v, int e) {
 		WeightedMultigraph<Integer, TimeEdge> g = new WeightedMultigraph<Integer, TimeEdge>(TimeEdge.class);
 		
@@ -84,7 +116,7 @@ public class Main {
 			g.addVertex(firstV);
 			g.addVertex(secondV);
 			TimeEdge curEdge = g.addEdge(firstV, secondV);	// add edge to graph
-			g.setEdgeWeight(curEdge, weight); 							// add weight to this edge
+			g.setEdgeWeight(curEdge, weight); // add weight to this edge
 		}
 		
 		return g;

@@ -1,6 +1,7 @@
 import org.jgrapht.graph.DefaultWeightedEdge;
 
 
+@SuppressWarnings("serial")
 public class TimeEdge extends DefaultWeightedEdge {
 	
 	public int getFirst(){
